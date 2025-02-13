@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Sbarchi</title>
+
+    <style>
+
+        input{
+            border: 5px solid grey;
+            margin: 5px;
+        }
+
+        button{
+            margin: 50px;
+            margin-left: 50%;
+            width: 100px;
+            height: 50px;
+            border: 5px solid grey;
+            font-size:30px;
+        }
+
+        th, td{
+            border: 3px solid grey;
+            height: 50px;
+            text-align: center;
+        }
+
+        .tab{
+            margin: 50px;
+            margin-top: 0px;
+            margin-left: 300px;
+        }
+
+        table{
+            border-collapse: collapse;
+            width: 52.5%;
+            background-color: rgb(159, 240, 0);
+        }
+
+        canvas {
+                border: 5px solid grey;
+                font: 12px Helvetica;
+                text-align: left;
+                margin-left: 300px;
+            }
+
+
+        body{
+            background-color: rgb(159, 240, 98);
+        }
+        
+    </style>
+</head>
+
+<body>
+    <div class="dati">
+        <input type="file" onchange="leggiFile(this)">
+    </div>
+    <div class="tab">
+        <table id="tabella">
+                <th>Anno</th>
+                <th>Sbarchi</th>
+        </table>
+    </div>
+    <canvas id="canvas" width="800" height="500"></canvas>
+</body>
+<script>
+
+function costruisciTabella(contenuto) {
+            let csv = contenuto.split("\n").slice(1); 
+
+            let tabella = "<table>";
+                let anniTabella = [];
+                let migrantiTabella = [];
+
+            for (let i = 0; i < csv.length; i++) {
+                let split = csv[i].split(","); 
+                let anno = split[0].slice(1, -1);
+                anniTabella.push(anno);
+                let numero = split[1].slice(1, -1);
+                migrantiTabella.push(numero);
+
+                tabella += "<tr>" + "<th>" + anno + "</th>" + "<th>" + numero + "</th>" + "</tr>";
+            }
+
+            tabella += "</table>";
+            document.getElementById("tabella").innerHTML += tabella;
+            costruisciGrafico(anniTabella, migrantiTabella)
+        }
+
+    function leggiFile(input){
+        let file = input.files[0] 
+        let l = new FileReader() 
+        l.readAsText(file);
+        l.onload = function() {
+        let contenuto = l.result;
+        costruisciTabella(contenuto)
+        }
+    }
+
+    function costruisciGrafico(anniTabella, migrantiTabella) {
+                const canvas = document.getElementById('canvas')
+                const ctx = canvas.getContext('2d')
+
+                const maxPer = Math.max(...migrantiTabella)
+                const scalatoX = (canvas.width - 100) / anniTabella.length
+                const scalatoY = (canvas.height - 100) / maxPer
+
+                ctx.beginPath()
+                ctx.moveTo(50, 50)
+                ctx.lineTo(50, canvas.height - 50)
+                ctx.lineTo(canvas.width - 50, canvas.height - 50)
+                ctx.stroke()
+
+                for (let i = 0; i < anniTabella.length; i++) {
+                    ctx.fillText(anniTabella[i], 50 + i * scalatoX, canvas.height - 30)
+                }
+
+                ctx.textAlign = 'right'
+                for (let i = 0; i <= 8; i++) {
+                    ctx.fillText(i * 20000, 45, canvas.height - 50 - i * 20000 * scalatoY)
+                }
+
+                // Disegna grafico
+                ctx.beginPath()
+                ctx.moveTo(50, canvas.height - 50 - migrantiTabella[0] * scalatoY)
+                for (let i = 1; i < anniTabella.length; i++) {
+                    ctx.lineTo(50 + i * scalatoX, canvas.height - 50 - migrantiTabella[i] * scalatoY)
+                }
+                ctx.stroke()
+            }
+</script>
+
+</html>
