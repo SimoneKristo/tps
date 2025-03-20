@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anagrafica</title>
+
+    <style>
+        body {
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+        button {
+            background-color: #4CAF50;
+        }
+
+        label {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <input type="text" id="nome" placeholder="Nome">
+        <input type="text" id="cognome" placeholder="Cognome">
+        <div>
+            <label><input type="radio" name="sesso" value="Maschio" id="m"> M</label>
+            <label><input type="radio" name="sesso" value="Femmina" id="f"> F</label>
+        </div>
+        <input type="text" id="indirizzo" placeholder="Indirizzo">
+        <input type="text" id="citta" placeholder="Città">
+        <button onclick="aggiungiDati()">Invia</button>
+        <button onclick="pagina2()">Pagina 2</button>
+    </div>
+
+    <script>
+        let dati = [];
+
+        function aggiungiDati() {
+            const persona = {
+                nome: document.getElementById('nome').value,
+                cognome: document.getElementById('cognome').value,
+                indirizzo: document.getElementById('indirizzo').value,
+                citta: document.getElementById('citta').value,
+                sesso: ottieniSesso()
+            };
+
+            if (persona.nome && persona.cognome && persona.indirizzo && persona.citta) {
+                dati.push(persona);
+                localStorage.setItem("tabella", JSON.stringify(dati));
+            }
+
+            document.getElementById('nome').value = "";
+            document.getElementById('cognome').value = "";
+            document.getElementById('indirizzo').value = "";
+            document.getElementById('citta').value = "";
+        }
+
+        function pagina2() {
+            location.href = "tabella.html";
+        }
+
+        function ottieniSesso() {
+            if (document.getElementById("m").checked)
+                return document.getElementById("m").value;
+            else
+                return document.getElementById("f").value;
+        }
+    </script>
+</body>
+
+</html>
